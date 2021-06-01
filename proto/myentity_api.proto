@@ -1,0 +1,45 @@
+// This is the public API offered by your entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
+
+package com.example;
+
+message AddMessageCommand {
+    string room_id = 1 [(akkaserverless.field).entity_key = true];
+    string user = 2;
+    string text = 3;
+}
+
+message GetMessagesCommand {
+    string room_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message Message {
+    string user = 1;
+    string text = 2;
+}
+
+message AllMessages {
+    repeated Message messages = 1;
+}
+
+service ChatRoomEntity {
+    option (akkaserverless.service) = {
+        type: SERVICE_TYPE_ENTITY
+        component: ".domain.ChatRoom"
+    };
+    rpc AddMessage(AddMessageCommand) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/messages/{room_id}/add"
+            body: "*"
+        };
+    };
+    rpc GetMessages(GetMessagesCommand) returns (AllMessages) {
+        option (google.api.http) = {
+            get: "/messages/{room_id}"
+        };
+    };
+}

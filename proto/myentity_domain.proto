@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.example.domain;
+
+import "akkaserverless/annotations.proto";
+
+option (akkaserverless.file).event_sourced_entity = {
+    name: "ChatRoom"
+    entity_type: "ChatRoom"
+    state: "Messages"
+    // events: "ValueSet"
+};
+
+message Message {
+    string user = 1;
+    string text = 2;
+}
+
+message MessageAdded {
+    string user = 1;
+    string text = 2;
+}
+
+message Messages {
+    repeated Message messages = 1;
+}
+
+// message ValueSet {
+//     string entity_id = 1 [(akkaserverless.field).entity_key = true];
+// }
